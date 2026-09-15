@@ -1,0 +1,49 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /shares/{shareId} {
+      allow get: if shareId.matches('^[0-9a-fA-F-]{36}$');
+
+      allow list: if request.auth != null
+        && request.auth.token.role == 'uploader';
+
+      allow create: if request.auth != null
+        && request.auth.token.role == 'uploader'
+        && shareId.matches('^[0-9a-fA-F-]{36}$')
+        && request.resource.data.keys().hasOnly([
+          'storagePath',
+          'fileName',
+          'contentType',
+          'size',
+          'downloadUrl',
+          'downloadCount',
+          'createdAt',
+          'expiresAt'
+        ])
+        && request.resource.data.storagePath is string
+        && request.resource.data.storagePath == 'shares/' + shareId + '/' + request.resource.data.fileName
+        && request.resource.data.fileName is string
+        && request.resource.data.fileName.size() > 0
+        && request.resource.data.fileName.size() <= 180
+        && request.resource.data.contentType is string
+        && request.resource.data.size is int
+        && request.resource.data.size > 0
+        && request.resource.data.size <= 1024 * 1024 * 1024
+        && request.resource.data.downloadUrl is string
+        && request.resource.data.downloadCount == 0
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.expiresAt is timestamp
+        && request.resource.data.expiresAt > request.time
+        && request.resource.data.expiresAt <= request.time + duration.value(31, 'd');
+
+      allow delete: if request.auth != null
+        && request.auth.token.role == 'uploader';
+
+      allow update: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

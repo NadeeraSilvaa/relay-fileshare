@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Relay — send a file, get a link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Figtree:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="atmosphere" aria-hidden="true"></div>
+
+    <!-- Public download page: /d/{shareId} -->
+    <main id="view-download" class="stage stage-narrow" hidden>
+      <p class="brand brand-sm">Relay</p>
+      <div id="download-loading" class="panel">
+        <p class="lede">Loading file…</p>
+      </div>
+      <div id="download-error" class="panel" hidden>
+        <h1 id="download-error-title">Link unavailable</h1>
+        <p id="download-error-text" class="lede"></p>
+      </div>
+      <div id="download-ready" class="panel" hidden>
+        <h1 id="dl-name">File</h1>
+        <p class="meta" id="dl-meta"></p>
+        <a id="dl-button" class="button-link" href="#" download>Download</a>
+        <p class="hint" id="dl-expiry"></p>
+      </div>
+    </main>
+
+    <!-- Login -->
+    <main id="view-login" class="stage" hidden>
+      <p class="brand">Relay</p>
+      <h1>Send a file. Get a link.</h1>
+      <p class="lede">Sign in with your upload password to share files with clients.</p>
+
+      <form id="login-form" class="panel" novalidate>
+        <label class="field">
+          <span>Upload password</span>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            required
+          />
+        </label>
+        <button id="login-submit" type="submit">Log in</button>
+        <p id="login-error" class="error" hidden></p>
+      </form>
+    </main>
+
+    <!-- Uploader dashboard -->
+    <main id="view-app" class="stage stage-wide" hidden>
+      <header class="topbar">
+        <p class="brand brand-sm">Relay</p>
+        <button id="logout" type="button" class="ghost">Log out</button>
+      </header>
+      <h1>Upload & share</h1>
+      <p class="lede">Files get a short link and a clean download page for clients.</p>
+
+      <div class="layout">
+        <section class="panel">
+          <form id="upload-form" novalidate>
+            <label class="field file-field dropzone" id="dropzone">
+              <span>File</span>
+              <input id="file" name="file" type="file" required />
+              <em id="file-label">Drop a file here or click — up to 1 GB</em>
+            </label>
+
+            <label class="field">
+              <span>Expires</span>
+              <select id="expiry" name="expiry">
+                <option value="1h">1 hour</option>
+                <option value="24h">24 hours</option>
+                <option value="7d" selected>7 days</option>
+                <option value="30d">30 days</option>
+              </select>
+            </label>
+
+            <button id="submit" type="submit">Upload</button>
+
+            <div id="progress" class="progress" hidden>
+              <div class="progress-track">
+                <div id="progress-bar" class="progress-bar"></div>
+              </div>
+              <p id="progress-text">Preparing upload…</p>
+            </div>
+
+            <p id="error" class="error" hidden></p>
+
+            <div id="result" class="result" hidden>
+              <label class="field">
+                <span>Shareable link</span>
+                <input id="share-url" type="text" readonly />
+              </label>
+              <div class="row">
+                <button id="copy" type="button">Copy link</button>
+                <a id="open-link" class="ghost-link" href="#" target="_blank" rel="noopener"
+                  >Open page</a
+                >
+              </div>
+            </div>
+          </form>
+        </section>
+
+        <section class="history-panel">
+          <div class="history-head">
+            <h2>Upload history</h2>
+            <button id="refresh-history" type="button" class="ghost">Refresh</button>
+          </div>
+          <p id="history-empty" class="hint">No uploads yet.</p>
+          <ul id="history-list" class="history-list"></ul>
+        </section>
+      </div>
+    </main>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
