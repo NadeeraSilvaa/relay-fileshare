@@ -380,6 +380,35 @@ function showView(name) {
   viewLogin.hidden = name !== "login";
   viewApp.hidden = name !== "app";
   viewDownload.hidden = name !== "download";
+  if (name === "app" || name === "download") loadPageAds(name);
+}
+
+function loadPageAds(name) {
+  const root = name === "download" ? viewDownload : viewApp;
+  root.querySelectorAll("[data-ad-banner]").forEach((el) => {
+    if (el.dataset.loaded) return;
+    el.dataset.loaded = "1";
+    window.atOptions = {
+      key: el.dataset.key,
+      format: "iframe",
+      height: Number(el.dataset.height),
+      width: Number(el.dataset.width),
+      params: {},
+    };
+    const s = document.createElement("script");
+    s.src = `https://www.highrevenueformat.com/${el.dataset.key}/invoke.js`;
+    el.appendChild(s);
+  });
+  const native = root.querySelector("[data-ad-native]");
+  if (native && !native.dataset.loaded) {
+    native.dataset.loaded = "1";
+    const s = document.createElement("script");
+    s.async = true;
+    s.dataset.cfasync = "false";
+    s.src =
+      "https://pl31376834.profitableratecpmnetwork.com/808e91bd3fc5754e3cadb7655110060e/invoke.js";
+    native.prepend(s);
+  }
 }
 
 function sharePageUrl(shareId) {
